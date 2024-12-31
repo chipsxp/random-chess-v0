@@ -1,0 +1,11 @@
+{
+      "name": "final-movement-fix-randomized-chess",
+      "private": true,
+      "version": "0.0.0",
+      "scripts": {
+            "dev": "vite"
+      },
+      "devDependencies": {
+            "vite": "^6.0.6"
+      }
+}
