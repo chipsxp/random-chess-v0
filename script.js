@@ -12,7 +12,7 @@ const pieces = ['♖', '♘', '♗', '♕', '♔', '♗', '♘', '♖'];
     function isSquareUnderAttack(square, attackingColor) {
       const row = parseInt(square.dataset.row);
       const col = parseInt(square.dataset.col);
-      
+
       const attackingPieces = Array.from(document.querySelectorAll('.piece')).filter(
         piece => piece.style.color === attackingColor
       );
@@ -26,7 +26,7 @@ const pieces = ['♖', '♘', '♗', '♕', '♔', '♗', '♘', '♖'];
         }
         draggedPiece = realDraggedPiece;
       }
-      
+
       return false;
     }
 
@@ -74,7 +74,7 @@ const pieces = ['♖', '♘', '♗', '♕', '♔', '♗', '♘', '♖'];
       const squares = [];
       const rowStep = startRow === endRow ? 0 : (endRow - startRow) / Math.abs(endRow - startRow);
       const colStep = startCol === endCol ? 0 : (endCol - startCol) / Math.abs(endCol - startCol);
-      
+
       let currentRow = startRow + rowStep;
       let currentCol = startCol + colStep;
 
@@ -148,7 +148,7 @@ const pieces = ['♖', '♘', '♗', '♕', '♔', '♗', '♘', '♖'];
           }
           break;
         case '♕':
-          if (currentCol === targetCol || currentRow === targetRow || 
+          if (currentCol === targetCol || currentRow === targetRow ||
               Math.abs(currentRow - targetRow) === Math.abs(currentCol - targetCol)) {
             return isPathClear(currentRow, currentCol, targetRow, targetCol);
           }
@@ -163,37 +163,37 @@ const pieces = ['♖', '♘', '♗', '♕', '♔', '♗', '♘', '♖'];
     }
 
     function findAttackingPieces(kingColor) {
-      const kingPiece = Array.from(document.querySelectorAll('.piece')).find(piece => 
+      const kingPiece = Array.from(document.querySelectorAll('.piece')).find(piece =>
         piece.textContent === '♔' && piece.style.color === kingColor
       );
-      
+
       const kingRow = parseInt(kingPiece.dataset.row);
       const kingCol = parseInt(kingPiece.dataset.col);
       const kingSquare = document.querySelector(`.square[data-row="${kingRow}"][data-col="${kingCol}"]`);
-      
+
       return Array.from(document.querySelectorAll('.piece')).filter(piece => {
         if (piece.style.color === kingColor) return false;
-        
+
         const realDraggedPiece = draggedPiece;
         draggedPiece = piece;
         const canAttack = isValidMove(piece, kingSquare, true);
         draggedPiece = realDraggedPiece;
-        
+
         return canAttack;
       });
     }
 
     function isKingInCheck(kingColor) {
-      const kingPiece = Array.from(document.querySelectorAll('.piece')).find(piece => 
+      const kingPiece = Array.from(document.querySelectorAll('.piece')).find(piece =>
         piece.textContent === '♔' && piece.style.color === kingColor
       );
-      
+
       if (!kingPiece) return false;
-      
+
       const kingRow = parseInt(kingPiece.dataset.row);
       const kingCol = parseInt(kingPiece.dataset.col);
       const kingSquare = document.querySelector(`.square[data-row="${kingRow}"][data-col="${kingCol}"]`);
-      
+
       return isSquareUnderAttack(kingSquare, kingColor === 'blue' ? 'red' : 'blue');
     }
 
@@ -206,7 +206,7 @@ const pieces = ['♖', '♘', '♗', '♕', '♔', '♗', '♘', '♖'];
       const originalSquare = piece.parentNode;
       const originalRow = piece.dataset.row;
       const originalCol = piece.dataset.col;
-      
+
       if (isValidMove(piece, targetSquare, true)) {
         if (targetPiece) {
           targetSquare.removeChild(targetPiece);
@@ -214,19 +214,19 @@ const pieces = ['♖', '♘', '♗', '♕', '♔', '♗', '♘', '♖'];
         piece.dataset.row = targetSquare.dataset.row;
         piece.dataset.col = targetSquare.dataset.col;
         targetSquare.appendChild(piece);
-        
+
         const isStillInCheck = isKingInCheck(piece.style.color);
-        
+
         piece.dataset.row = originalRow;
         piece.dataset.col = originalCol;
         originalSquare.appendChild(piece);
         if (targetPiece) {
           targetSquare.appendChild(targetPiece);
         }
-        
+
         return !isStillInCheck;
       }
-      
+
       return false;
     }
 
@@ -235,10 +235,10 @@ const pieces = ['♖', '♘', '♗', '♕', '♔', '♗', '♘', '♖'];
         return false;
       }
 
-      const kingPiece = Array.from(document.querySelectorAll('.piece')).find(piece => 
+      const kingPiece = Array.from(document.querySelectorAll('.piece')).find(piece =>
         piece.textContent === '♔' && piece.style.color === kingColor
       );
-      
+
       const kingRow = parseInt(kingPiece.dataset.row);
       const kingCol = parseInt(kingPiece.dataset.col);
       const opposingColor = kingColor === 'blue' ? 'red' : 'blue';
@@ -254,7 +254,7 @@ const pieces = ['♖', '♘', '♗', '♕', '♔', '♗', '♘', '♖'];
           if (newRow >= 0 && newRow < 8 && newCol >= 0 && newCol < 8) {
             const targetSquare = document.querySelector(`.square[data-row="${newRow}"][data-col="${newCol}"]`);
             const pieceOnSquare = targetSquare.querySelector('.piece');
-            
+
             if (!pieceOnSquare || pieceOnSquare.style.color !== kingColor) {
               if (canMoveWithoutCheck(kingPiece, targetSquare)) {
                 return false;
@@ -315,10 +315,10 @@ const pieces = ['♖', '♘', '♗', '♕', '♔', '♗', '♘', '♖'];
                 draggedPiece.dataset.row = targetSquare.dataset.row;
                 draggedPiece.dataset.col = targetSquare.dataset.col;
                 targetSquare.appendChild(draggedPiece);
-                
+
                 const opponentColor = isBluesTurn ? 'red' : 'blue';
                 isInCheck = isKingInCheck(opponentColor);
-                
+
                 if (isInCheck) {
                   const checkmated = isCheckmate(opponentColor);
                   if (checkmated) {
@@ -328,13 +328,13 @@ const pieces = ['♖', '♘', '♗', '♕', '♔', '♗', '♘', '♖'];
                     alert(`Check!`);
                   }
                 }
-                
+
                 if (!isInCheck || !isCheckmate(opponentColor)) {
                   isBluesTurn = !isBluesTurn;
                   turnIndicator.textContent = isBluesTurn ? "Blue's Turn" : "Red's Turn";
                   turnIndicator.style.color = isBluesTurn ? 'blue' : 'red';
                 }
-                
+
                 draggedPiece = null;
               }
             }
@@ -363,12 +363,12 @@ const pieces = ['♖', '♘', '♗', '♕', '♔', '♗', '♘', '♖'];
       while (chessboard.firstChild) {
         chessboard.removeChild(chessboard.firstChild);
       }
-      
+
       isBluesTurn = true;
       isInCheck = false;
       turnIndicator.textContent = "Blue's Turn";
       turnIndicator.style.color = 'blue';
-      
+
       createChessboard();
     }
 

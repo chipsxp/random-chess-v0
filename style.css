@@ -16,7 +16,7 @@ body {
       position: absolute;
       top: 0;
       left: -80px;
-      padding: 8px 16px;
+      padding: 10px 20px;
       background-color: #4CAF50;
       color: white;
       border: none;
@@ -44,15 +44,15 @@ body {
     }
 
     .white {
-      background-color: #fff;
+      background-color: #000;
     }
 
     .black {
-      background-color: #666;
+      background-color: #fff;
     }
 
     .piece {
-      font-size: 2em;
+      font-size: 3.125em; /* Increased size by 25% */
       text-align: center;
       line-height: 50px;
       cursor: pointer;
