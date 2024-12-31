@@ -333,6 +333,10 @@ const pieces = ['♖', '♘', '♗', '♕', '♔', '♗', '♘', '♖'];
                   isBluesTurn = !isBluesTurn;
                   turnIndicator.textContent = isBluesTurn ? "Blue's Turn" : "Red's Turn";
                   turnIndicator.style.color = isBluesTurn ? 'blue' : 'red';
+
+                  if (!isBluesTurn) {
+                    setTimeout(makeAIMove, 500);
+                  }
                 }
 
                 draggedPiece = null;
@@ -391,6 +395,72 @@ const pieces = ['♖', '♘', '♗', '♕', '♔', '♗', '♘', '♖'];
       chessboard.parentNode.insertBefore(turnIndicator, chessboard);
 
       createChessboard();
+    }
+
+    function makeAIMove() {
+      const redPieces = Array.from(document.querySelectorAll('.piece')).filter(piece => piece.style.color === 'red');
+      let bestMove = null;
+      let bestScore = -Infinity;
+
+      for (const piece of redPieces) {
+        for (let row = 0; row < 8; row++) {
+          for (let col = 0; col < 8; col++) {
+            const targetSquare = document.querySelector(`.square[data-row="${row}"][data-col="${col}"]`);
+            if (isValidMove(piece, targetSquare, true)) {
+              const score = evaluateMove(piece, targetSquare);
+              if (score > bestScore) {
+                bestScore = score;
+                bestMove = { piece, targetSquare };
+              }
+            }
+          }
+        }
+      }
+
+      if (bestMove) {
+        const { piece, targetSquare } = bestMove;
+        const capturedPiece = targetSquare.querySelector('.piece');
+        if (capturedPiece) {
+          targetSquare.removeChild(capturedPiece);
+        }
+
+        piece.dataset.row = targetSquare.dataset.row;
+        piece.dataset.col = targetSquare.dataset.col;
+        targetSquare.appendChild(piece);
+
+        const opponentColor = 'blue';
+        isInCheck = isKingInCheck(opponentColor);
+
+        if (isInCheck) {
+          const checkmated = isCheckmate(opponentColor);
+          if (checkmated) {
+            alert(`Checkmate! Red wins!`);
+            setTimeout(resetGame, 1000);
+          } else {
+            alert(`Check!`);
+          }
+        }
+
+        if (!isInCheck || !isCheckmate(opponentColor)) {
+          isBluesTurn = !isBluesTurn;
+          turnIndicator.textContent = isBluesTurn ? "Blue's Turn" : "Red's Turn";
+          turnIndicator.style.color = isBluesTurn ? 'blue' : 'red';
+        }
+      }
+    }
+
+    function evaluateMove(piece, targetSquare) {
+      // Simple evaluation function: prioritize capturing pieces and moving towards the center
+      const targetPiece = targetSquare.querySelector('.piece');
+      if (targetPiece && targetPiece.style.color === 'blue') {
+        return 10;
+      }
+
+      const targetRow = parseInt(targetSquare.dataset.row);
+      const targetCol = parseInt(targetSquare.dataset.col);
+      const centerDistance = Math.abs(targetRow - 3.5) + Math.abs(targetCol - 3.5);
+
+      return 5 - centerDistance;
     }
 
     initializeGame();
